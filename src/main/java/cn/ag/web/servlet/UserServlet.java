@@ -42,7 +42,6 @@ public class UserServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(json);
             return;
-
         }
 
         //1.获取数据
@@ -84,8 +83,6 @@ public class UserServlet extends BaseServlet {
      * @throws ServletException
      * @throws IOException
      */
-
-
     public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String check = request.getParameter("check");
         HttpSession session = request.getSession();
@@ -107,7 +104,6 @@ public class UserServlet extends BaseServlet {
         }
         //1.接受username和password数据
         Map<String, String[]> map = request.getParameterMap();
-
         /*String remember = request.getParameter("remember");*/
      /*   System.out.println(remember);*/
       /*  String username = request.getParameter("username");
@@ -164,11 +160,6 @@ public class UserServlet extends BaseServlet {
         String json = writeValueAsString(resultInfo);
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(json);
-
-
-
-
-
     }
 
     /**
@@ -186,8 +177,6 @@ public class UserServlet extends BaseServlet {
         response.setContentType("application/json;charset=utf-8");
         mapper.writeValue(response.getOutputStream(),login_name);*/
         writeValue(login_name,response);
-
-
     }
 
     /**
@@ -202,8 +191,6 @@ public class UserServlet extends BaseServlet {
         HttpSession session = request.getSession();
         session.invalidate();
         response.sendRedirect(request.getContextPath() + "/index.html");
-
-
     }
 
     /**
@@ -234,13 +221,63 @@ public class UserServlet extends BaseServlet {
     public void findOne(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         Object user =  session.getAttribute("user");
-        /*ObjectMapper mapper = new ObjectMapper();
-        response.setContentType("application/json;charset=utf-8");
-        mapper.writeValue(response.getOutputStream(),login_name);*/
         writeValue(user,response);
     }
 
+    /**
+     *用户修改
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
+    public void change(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        //校验验证码，因为验证码在session中
+        String check = request.getParameter("check");
+        HttpSession session = request.getSession();
+        String checkcode_server = (String) session.getAttribute("CHECKCODE_SERVER");
+        session.removeAttribute("CHECKCODE_SERVER");
+        if (checkcode_server == null || !checkcode_server.equalsIgnoreCase(check)) {
+            ResultInfo resultInfo = new ResultInfo();
+            resultInfo.setFlag(false);
+            resultInfo.setErrorMsg("验证码错误！");
+            //(1).将提示信息转为json
+          /*  ObjectMapper mapper = new ObjectMapper();
+            String json = mapper.writeValueAsString(resultInfo);*/
+            String json = writeValueAsString(resultInfo);
+            // (2.设置响应头contertType
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(json);
+            return;
+        }
 
+        //1.获取数据
+        Map<String, String[]> map = request.getParameterMap();
+        //2.封装user对象
+        User user = new User();
+        try {
+            BeanUtils.populate(user, map);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        //3.调用service完成注册
+        UserServiceImpl userService = new UserServiceImpl();
+        boolean flag = userService.change(user);
 
-
+        //4.根据service的返回提示信息
+        ResultInfo resultInfo = new ResultInfo();
+        if (flag) {
+            resultInfo.setFlag(true);
+        } else {
+            resultInfo.setFlag(false);
+            resultInfo.setErrorMsg("修改失败");
+        }
+        //(1).将提示信息转为json
+        String json = writeValueAsString(resultInfo);
+        // (2.设置响应头contertType
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(json);
+    }
 }

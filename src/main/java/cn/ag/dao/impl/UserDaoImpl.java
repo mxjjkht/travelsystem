@@ -26,13 +26,21 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void save(User user) {
                    //定义sql语句
-        String sql="insert into tab_user(username,password,name,birthday,sex,telephone,email,status,code)values(?,?,?,?,?,?,?,?,?)";
+        String sql="update tab_user(username,password,name,birthday,sex,telephone,email,status,code)values(?,?,?,?,?,?,?,?,?)";
         //执行sql
        jdbcTemplate.update(sql,user.getUsername(),
                user.getPassword(),user.getName(),
                user.getBirthday(),user.getSex(),user.getTelephone(),
                user.getEmail(),user.getStatus(),user.getCode());
+    }
 
+    @Override
+    public void update(User user) {
+        //定义sql语句
+        String sql="UPDATE tab_user SET password=?,name=?,telephone=?,sex=?,birthday=? WHERE username=?";
+        //执行sql
+        jdbcTemplate.update(sql,user.getPassword(),user.getName(),user.getTelephone(),
+                user.getSex(),user.getBirthday(),user.getUsername());
     }
 
     @Override
@@ -61,7 +69,6 @@ public class UserDaoImpl implements UserDao {
         } catch (DataAccessException e) {
         }
         return u;
-
     }
 
 

@@ -50,8 +50,12 @@ public class FavoriteDaoImpl implements FavoriteDao {
      */
     @Override
     public void addFavorite(int rid, int uid) {
-         String sql="insert into travel3.tab_favorite values (?,?,?)";
-       jdbcTemplate.update(sql,rid,new Date(),uid);
+        int count = findCount(rid);
+        count++;
+        String sql="insert into travel3.tab_favorite values (?,?,?)";
+        jdbcTemplate.update(sql,rid,new Date(),uid);
+        String sql1="UPDATE travel3.tab_route SET rcount=? WHERE rid=? ";
+        jdbcTemplate.update(sql1,count,rid);
     }
 
     /**
@@ -61,8 +65,12 @@ public class FavoriteDaoImpl implements FavoriteDao {
      */
     @Override
     public void removefavorite(int rid, int uid) {
+        int count = findCount(rid);
+        count--;
         String sql="delete from tab_favorite where rid =? and uid= ?";
         jdbcTemplate.update(sql,rid,uid);
+        String sql1="UPDATE travel3.tab_route SET rcount=? WHERE rid=? ";
+        jdbcTemplate.update(sql1,count,rid);
     }
 
     @Override

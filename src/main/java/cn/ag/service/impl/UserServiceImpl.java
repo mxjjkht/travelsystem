@@ -24,11 +24,15 @@ private     UserDaoImpl userDao = new UserDaoImpl();
             //发送邮件
             MailUtils.sendMail(user.getEmail(),context,"激活");
 
-
-
             return true;
         }
+    }
 
+    public boolean change(User user) {
+        User u = userDao.findbyusername(user.getUsername());
+        userDao.update(user);
+
+        return true;
     }
 
     @Override
@@ -41,7 +45,6 @@ private     UserDaoImpl userDao = new UserDaoImpl();
         }else{
             return false;
         }
-
     }
 
     public User login(User user) {

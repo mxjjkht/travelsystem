@@ -18,11 +18,11 @@ public interface  UserDao {
      */
     public  void save (User user);
 
+    public  void update (User user);
+
     User findbycode(String code);
 
     void updateStatus(User user);
-
-
 
     User findbyusernameandpassword(String username, String password);
 }

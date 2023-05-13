@@ -19,7 +19,6 @@ public class findbyusernameServlet extends HttpServlet {
         ObjectMapper mapper = new ObjectMapper();
         response.setContentType("application/json;charset=utf-8");
         mapper.writeValue(response.getOutputStream(),login_name);
-
     }
 
     @Override
